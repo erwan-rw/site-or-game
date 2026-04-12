@@ -994,7 +994,7 @@ this.muteBtn.on('pointerdown', () => {
     // JustDown equivalent for touch (avoids holding jump)
     const jumpNow = JUMP && !this._pjump;
     this._pjump = JUMP;
-    this._particles(p.x, p.y, 0xffffff, 5);
+    
 
     const onGround = p.body.blocked.down;
     const spd = this.spdBoost ? this.BASE_SPD*1.8 : this.BASE_SPD;
