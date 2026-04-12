@@ -700,6 +700,7 @@ class GameScene extends Phaser.Scene {
     this.player.setSize(22,50);
     this.player.setBounce(0.04);
     this.player.wf=0; this.player.wt=0;
+    this.player.canDoubleJump = true;
   }
 
   // ─── HUD ────────────────────────────────────────────────────
@@ -981,8 +982,17 @@ class GameScene extends Phaser.Scene {
     else if(RIGHT) { p.setVelocityX(spd);  p.setFlipX(false); }
     else           { p.setVelocityX(0); }
 
-    if(jumpNow && onGround){ p.setVelocityY(jmp); SFX.jump(); }
-
+    if (jumpNow) {
+  if (onGround) {
+    p.setVelocityY(jmp);
+    this.player.canDoubleJump = true;
+    SFX.jump();
+  } else if (this.player.canDoubleJump) {
+    p.setVelocityY(jmp * 0.9);
+    this.player.canDoubleJump = false;
+    SFX.jump();
+  }
+}
     // Texture selection
     if(this.invinc){
       p.setTexture('p_star');
