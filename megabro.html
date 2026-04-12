@@ -750,6 +750,7 @@ this.muteBtn.on('pointerdown', () => {
   // ─── KEYBOARD ───────────────────────────────────────────────
   _setupKeys(){
     this.keys=this.input.keyboard.createCursorKeys();
+    this.pauseKey=this.input.keyboard.addKey('P');
     this.wasd=this.input.keyboard.addKeys({
       left:'A',right:'D',up:'W',space:Phaser.Input.Keyboard.KeyCodes.SPACE
     });
@@ -980,6 +981,10 @@ this.muteBtn.on('pointerdown', () => {
     // Fall into void
     if(this.player.y>GH+80) this._die();
 
+    if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
+      this.scene.pause();
+      this.scene.launch('PauseScene');
+    }
     this._updatePlayer(dt);
     this._updateEnemies(dt);
   }
@@ -1187,6 +1192,29 @@ class WinScene extends Phaser.Scene {
   }
 }
 
+class PauseScene extends Phaser.Scene {
+  constructor() { super({ key: 'PauseScene' }); }
+
+  create() {
+    this.add.rectangle(400, 225, 800, 450, 0x000000, 0.7);
+
+    this.add.text(400, 180, 'PAUSE', {
+      fontSize: '40px',
+      color: '#fff'
+    }).setOrigin(0.5);
+
+    this.add.text(400, 260, 'Appuie sur P pour reprendre', {
+      fontSize: '18px',
+      color: '#fff'
+    }).setOrigin(0.5);
+
+    this.input.keyboard.on('keydown-P', () => {
+      this.scene.stop();
+      this.scene.resume('GameScene');
+    });
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  PHASER BOOT
 // ═══════════════════════════════════════════════════════════════
@@ -1203,7 +1231,7 @@ window.addEventListener('DOMContentLoaded', () => {
       default: 'arcade',
       arcade: { gravity:{ y:600 }, debug:false }
     },
-    scene: [MenuScene, GameScene, LevelIntroScene, GameOverScene, WinScene],
+    scene: [MenuScene, GameScene, LevelIntroScene, GameOverScene, WinScene, PauseScene],
   });
 });
 </script>
