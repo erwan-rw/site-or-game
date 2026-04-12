@@ -38,8 +38,8 @@
     position:absolute; bottom:14px; right:14px;
     width:68px; height:68px; border-radius:50%;
     background:rgba(255,200,0,0.35);
-    border:2px solid rgba(255,200,0,0.7);
-    color:#fff; font-size:26px;
+    border:2px solid rgba(239, 192, 21, 0.7);
+    color:#c4bfbf; font-size:26px;
     display:flex; align-items:center; justify-content:center;
     user-select:none; -webkit-user-select:none;
     cursor:pointer; pointer-events:all;
@@ -700,6 +700,7 @@ class GameScene extends Phaser.Scene {
     this.player.setSize(22,50);
     this.player.setBounce(0.04);
     this.player.wf=0; this.player.wt=0;
+    this.player.canDoubleJump = true;
   }
 
   // ─── HUD ────────────────────────────────────────────────────
@@ -714,6 +715,9 @@ class GameScene extends Phaser.Scene {
       {...s,fontSize:'12px',color:'#aaddff'}).setScrollFactor(0).setDepth(20).setOrigin(1,0);
 
     this.timeLeft=this.ld.timeLimit;
+    this.lifeBar = this.add.rectangle(150, 20, 100, 10, 0xff0000)
+  .setScrollFactor(0)
+  .setDepth(20);
     this.timerEv=this.time.addEvent({
       delay:1000, repeat:this.ld.timeLimit-1,
       callback:()=>{
@@ -878,6 +882,7 @@ class GameScene extends Phaser.Scene {
     this.cameras.main.flash(300,180,0,0);
     this.player.setTint(0xff0000);
     this.player.setVelocityY(-380);
+    this.lifeBar.width = this.lives * 30;
 
     this._saveBest();
 
@@ -981,8 +986,17 @@ class GameScene extends Phaser.Scene {
     else if(RIGHT) { p.setVelocityX(spd);  p.setFlipX(false); }
     else           { p.setVelocityX(0); }
 
-    if(jumpNow && onGround){ p.setVelocityY(jmp); SFX.jump(); }
-
+    if (jumpNow) {
+  if (onGround) {
+    p.setVelocityY(jmp);
+    this.player.canDoubleJump = true;
+    SFX.jump();
+  } else if (this.player.canDoubleJump) {
+    p.setVelocityY(jmp * 0.9);
+    this.player.canDoubleJump = false;
+    SFX.jump();
+  }
+}
     // Texture selection
     if(this.invinc){
       p.setTexture('p_star');
