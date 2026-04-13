@@ -674,6 +674,14 @@ class GameScene extends Phaser.Scene {
   // ─── ENEMIES ────────────────────────────────────────────────
   _makeEnemies() {
     this.enemyGrp = this.physics.add.group();
+
+    this.boss = this.physics.add.sprite(this.ld.flagX - 200, this.ld.groundY - 80, 'goomba');
+    this.boss.setScale(2);
+    this.boss.setTint(0xff0000);
+    this.boss.setCollideWorldBounds(true);
+    this.boss.hp = 5;
+    this.boss.setVelocityX(-100);
+
     this.ld.enemies.forEach(({t,x,y})=>{
       const isK=(t==='k');
       const e=this.enemyGrp.create(x,y,isK?'koopa':'goomba');
@@ -802,6 +810,25 @@ this.muteBtn.on('pointerdown', () => {
     this.physics.add.overlap(p,this.puGrp,(player,pu)=>{
       this._applyPU(pu.puType); pu.destroy();
     });
+
+    //Player ↔ boss
+    this.physics.add.overlap(this.player, this.boss, (player, boss) => {
+  if (this.invinc) return;
+
+  if (player.body.velocity.y > 0) {
+    boss.hp--;
+    this._float(boss.x, boss.y - 20, '-1', '#ff0000');
+    player.setVelocityY(-300);
+
+    if (boss.hp <= 0) {
+      boss.destroy();
+      this._score(2000);
+      this._levelDone();
+    }
+  } else {
+    this._die();
+  }
+});
 
     // Player ↔ spikes
     this.physics.add.overlap(p,this.spikeGrp,()=>{ if(!this.invinc) this._die(); });
