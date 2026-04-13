@@ -230,7 +230,7 @@ const LEVELS = [
     ],
     flagX: 4050,
     weather: 'rain',
-    hasBoss: true,
+    hasBoss: false,
   },
   {
     // ── LEVEL 2 — Monde violet (tempête) ─────────────────────
@@ -283,7 +283,7 @@ const LEVELS = [
     ],
     flagX: 5060,
     weather: 'storm',
-    hasBoss: true,
+    hasBoss: false,
   },
   {
     // ── LEVEL 3 — Monde des étoiles (météores) + BOSS ────────
